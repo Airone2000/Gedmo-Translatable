@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Area;
+use App\Entity\AreaTranslation;
 use App\Entity\Article;
 use Gedmo\Translator\Entity\Translation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -53,9 +55,28 @@ class AppController extends AbstractController
     print_r($translations);
     echo '</pre>';
   
-  
-  
     dump($article);
     return new Response('<body></body>');
+  }
+  
+  /**
+   * @Route(path="/save-area")
+   */
+  public function saveArea()
+  {
+    $em = $this->getDoctrine()->getManager();
+    $repository = $em->getRepository(AreaTranslation::class);
+    
+    $area = new Area();
+    $repository
+      ->translate($area, 'name', 'fr_FR', 'Area FR')
+      ->translate($area, 'name', 'en_UK', 'Area EN')
+    ;
+    
+    $em->persist($area);
+    $em->flush();
+    
+    
+    die('SAVED');
   }
 }
