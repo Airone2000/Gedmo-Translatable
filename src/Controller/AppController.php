@@ -18,17 +18,21 @@ class AppController extends AbstractController
   public function saveArticle()
   {
     $em = $this->getDoctrine()->getManager();
+    $repository = $em->getRepository(\Gedmo\Translatable\Entity\Translation::class);
     
     $article = new Article();
     $article->setTitle('This is an english title');
     $article->setContent('And this is an english content');
-    $article->setLocale('en_UK');
-    $em->persist($article);
-    $em->flush();
     
-    $article->setTitle('Ceci est un titre français');
-    $article->setContent('Contenu en français');
-    $article->setLocale('fr_FR');
+    $repository
+      ->translate($article, 'title', 'fr_FR', 'Titre en français')
+      ->translate($article, 'content', 'fr_FR', 'Contenu en français')
+      ->translate($article, 'title', 'en_UK', 'Title in english')
+      ->translate($article, 'content', 'en_UK', 'Content in english')
+    ;
+    
+ 
+    $em->persist($article);
     $em->flush();
     
     
